@@ -1,0 +1,29 @@
+.welcomeMessage {
+    position: fixed;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%) perspective(500px) rotateX(20deg);
+    width: 100%;
+    text-align: center;
+    color: #ffd700;
+    font-family: "Orbitron", "Arial Black", sans-serif;
+    font-size: 3em;
+    text-shadow: 0 0 10px #ffd700, 0 0 20px #ffd700, 0 0 30px #b8860b;
+    opacity: 0;
+    z-index: 2;
+    letter-spacing: 6px;
+  }
+  
+  @keyframes glowPulse {
+    0% {
+      text-shadow: 0 0 10px #ffd700;
+    }
+    50% {
+      text-shadow: 0 0 20px #ffd700, 0 0 30px #b8860b;
+    }
+    100% {
+      text-shadow: 0 0 10px #ffd700;
+    }
+  }
+  
+  

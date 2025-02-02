@@ -1,0 +1,22 @@
+.startButton {
+    position: fixed;
+    bottom: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 15px 30px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.2rem;
+    background: transparent;
+    border: 2px solid #00ffff;
+    color: #00ffff;
+    cursor: pointer;
+    z-index: 10;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+  
+  .startButton:hover {
+    background: rgba(0, 255, 255, 0.1);
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+  }
