@@ -1,36 +1,19 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import type { SupabaseClient, User } from "@supabase/supabase-js"
+import { useState } from "react"
 import Image from "next/image"
+import { useRouter } from "next/navigation"
+import { createUser, validateUser } from "@/lib/auth"
 import styles from "./CyberSecAuth.module.css"
 
-interface CyberSecAuthProps {
-  supabase: SupabaseClient
-}
-
-export default function CyberSecAuth({ supabase }: CyberSecAuthProps) {
+export default function CyberSecAuth() {
   const [isSignUp, setIsSignUp] = useState(false)
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [username, setUsername] = useState("")
   const [error, setError] = useState("")
   const [message, setMessage] = useState("")
-  const [user, setUser] = useState<User | null>(null)
-
-  useEffect(() => {
-    const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === "SIGNED_IN") {
-        setUser(session?.user ?? null)
-      } else if (event === "SIGNED_OUT") {
-        setUser(null)
-      }
-    })
-
-    return () => {
-      authListener.subscription.unsubscribe()
-    }
-  }, [supabase.auth])
+  const router = useRouter()
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -39,54 +22,25 @@ export default function CyberSecAuth({ supabase }: CyberSecAuthProps) {
 
     try {
       if (isSignUp) {
-        const { data, error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            data: { username },
-            emailRedirectTo: `${window.location.origin}/auth/callback`,
-          },
-        })
-        if (error) throw error
-        setMessage("Check your email in 2-5 mins for the confirmation link!")
+        const result = await createUser({ username, email, password });
+        if (result.error) {
+          setError(result.error);
+          return;
+        }
+        setMessage("Registration successful! Please log in.");
+        setIsSignUp(false);
       } else {
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        })
-        if (error) throw error
-        setMessage("Access granted. Welcome, agent.")
+        const user = await validateUser(email, password);
+        if (!user) {
+          setError("Invalid credentials");
+          return;
+        }
+        window.sessionStorage.setItem('username', user.username || user.email);
+        router.push('/dashboard');
       }
     } catch (error: any) {
-      setError(error.message)
+      setError('Authentication failed');
     }
-  }
-
-  const handleSignOut = async () => {
-    const { error } = await supabase.auth.signOut()
-    if (error) {
-      setError(error.message)
-    } else {
-      setUser(null)
-      setMessage("You have been safely extracted from the system.")
-    }
-  }
-
-  if (user) {
-    return (
-      <div className={styles.cyberSecContainer}>
-        <Image
-          src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/logo-qRhVobWjo6H1SFt0hA0T3EOPUOZBuL.png"
-          alt="CyberSec Logo"
-          width={150}
-          height={150}
-        />
-        <div className={styles.welcomeMessage}>Welcome, Agent {user.user_metadata.username || user.email}</div>
-        <button onClick={handleSignOut} className={styles.signOutButton}>
-          Terminate Session
-        </button>
-      </div>
-    )
   }
 
   return (

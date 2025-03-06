@@ -1,18 +1,11 @@
-"use client"
+  "use client"
 
 import { useEffect, useState } from "react"
 import CyberScene from "../components/CyberScene"
 import WelcomeMessage from "../components/WelcomeMessage"
 import StartButton from "../components/StartButton"
 import CyberSecAuth from "../components/CyberSecAuth"
-import { createClient } from "@supabase/supabase-js"
 import styles from "./page.module.css"
-
-// Create the Supabase client
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
 
 export default function Home() {
   const [journeyStarted, setJourneyStarted] = useState(false)
@@ -50,7 +43,7 @@ export default function Home() {
         <StartButton onClick={handleStartJourney} />
       )}
       
-      {showAuth && <CyberSecAuth supabase={supabase} />}
+      {showAuth && <CyberSecAuth />}
     </main>
   )
 }
